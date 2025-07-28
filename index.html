@@ -1,0 +1,1443 @@
+<!DOCTYPE html>
+<html lang="en" x-data="app()" x-bind:class="{'dark': darkMode}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZUA HOMES REAL ESTATE LLC - Your Dream Home Awaits</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Alpine.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body.dark {
+            background-color: #000000;
+            color: #ffffff;
+        }
+        
+        body.light {
+            background-color: #ffffff;
+            color: #000000;
+        }
+        
+        body.light .navbar-blur {
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+        
+        body.light .property-card {
+            background-color: #f8f9fa;
+            color: #000000;
+        }
+        
+        body.light .property-card:hover {
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(0, 0, 0, 0.5);
+        }
+        
+        body.light .modal-content {
+            background-color: #ffffff;
+            color: #000000;
+        }
+        
+        body.light .close {
+            color: #000000;
+        }
+        
+        body.light #property-search {
+            background-color: #f8f9fa;
+            border-color: #dee2e6;
+            color: #000000;
+        }
+        
+        body.light #property-search::placeholder {
+            color: #6c757d;
+        }
+        
+        .navbar-blur {
+            backdrop-filter: blur(10px);
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+        
+        .property-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+        }
+        
+        .social-icon:hover {
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
+            transform: scale(1.1);
+        }
+        
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease-in-out;
+        }
+        
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .hero-arrow {
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+        }
+        
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background-color: #1a1a1a;
+            padding: 2rem;
+            border-radius: 10px;
+            max-width: 800px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+        
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            color: #fff;
+            cursor: pointer;
+        }
+        
+        .close:hover {
+            color: #ccc;
+        }
+
+        /* Custom Logo Styles */
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo-text {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 1.5rem;
+            background: linear-gradient(90deg, #0a0a0a, #545353);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+        }
+
+        .property-carousel {
+            display: flex;
+            overflow-x: auto;
+            gap: 10px;
+            padding: 10px 0;
+            scrollbar-width: thin;
+            scrollbar-color: #888 #333;
+        }
+        
+        .property-carousel img {
+            height: 300px;
+            width: auto;
+            object-fit: cover;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        
+        .property-carousel img:hover {
+            transform: scale(1.03);
+        }
+        
+        .property-carousel::-webkit-scrollbar {
+            height: 8px;
+        }
+        
+        .property-carousel::-webkit-scrollbar-track {
+            background: #333;
+            border-radius: 10px;
+        }
+        
+        .property-carousel::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+        
+        .property-carousel::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+        
+        /* New additions from index18.html */
+        .property-card {
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        .property-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .dark .property-card {
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+        .dark .property-card:hover {
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+        .filter-section {
+            transition: all 0.3s ease;
+        }
+        .details-btn {
+            transition: all 0.3s ease;
+        }
+        .details-btn:hover {
+            background-color: #0e2e53;
+            color: white;
+        }
+        .property-image {
+            height: 220px;
+            object-fit: cover;
+            width: 100%;
+        }
+        .amenities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 10px;
+        }
+        .scroll-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 100;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .scroll-to-top.visible {
+            opacity: 1;
+        }
+        @media (max-width: 768px) {
+            .property-image {
+                height: 180px;
+            }
+            .amenities-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body class="dark bg-black text-white">
+    
+    <!-- Navbar -->
+    <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 py-4">
+        <div class="container mx-auto px-6 flex items-center justify-between">
+            <!-- Logo -->
+            <div class="logo-container">
+                <img src="https://iili.io/Fk8MqJ4.md.jpg" alt="ZUA HOMES" class="h-12 w-auto">
+                <span class="logo-text">ZUA HOMES</span>
+            </div>
+            
+            <!-- Navigation Links -->
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="#properties" class="hover:text-gray-300 transition-colors">Buy</a>
+                <a href="#properties" class="hover:text-gray-300 transition-colors">Rent</a>
+                <a href="#properties" class="hover:text-gray-300 transition-colors">Commercial</a>
+                <a href="#properties" class="hover:text-gray-300 transition-colors">Plots</a>
+                <a href="#about" class="hover:text-gray-300 transition-colors">About</a>
+                <a href="#contact" class="hover:text-gray-300 transition-colors">Contact</a>
+            </div>
+            
+            <!-- Dark/Light Mode Toggle -->
+            <div class="flex items-center space-x-4">
+                <button id="theme-toggle" class="p-2 rounded-full hover:bg-gray-800 transition-colors">
+                    <i class="fas fa-moon text-xl"></i>
+                </button>
+                
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-btn" class="md:hidden p-2">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="md:hidden hidden bg-black bg-opacity-95 backdrop-blur-lg">
+            <div class="px-6 py-4 space-y-4">
+                <a href="#properties" class="block hover:text-gray-300 transition-colors">Buy</a>
+                <a href="#properties" class="block hover:text-gray-300 transition-colors">Rent</a>
+                <a href="#properties" class="block hover:text-gray-300 transition-colors">Commercial</a>
+                <a href="#properties" class="block hover:text-gray-300 transition-colors">Plots</a>
+                <a href="#about" class="block hover:text-gray-300 transition-colors">About</a>
+                <a href="#contact" class="block hover:text-gray-300 transition-colors">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="hero" class="relative h-screen flex items-center justify-center overflow-hidden">
+        <div class="absolute inset-0 bg-cover bg-center bg-no-repeat" style="background-image: url('https://images.unsplash.com/photo-1512453979798-5ea266f8880c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');">
+            <div class="absolute inset-0 bg-black bg-opacity-50"></div>
+        </div>
+        
+        <div class="relative z-10 text-center px-6 max-w-4xl mx-auto">
+            <h1 class="text-5xl md:text-7xl font-bold mb-6 fade-in">Your Dream Home Awaits</h1>
+            <p class="text-xl md:text-2xl mb-8 text-gray-300 fade-in">Discover Luxury Living in Dubai</p>
+            <button onclick="scrollToProperties()" class="bg-white text-black px-8 py-4 rounded-lg font-semibold hover:bg-gray-200 transition-colors fade-in">
+                Explore Properties
+            </button>
+            
+            <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2">
+                <i class="fas fa-chevron-down text-3xl hero-arrow cursor-pointer" onclick="scrollToProperties()"></i>
+            </div>
+        </div>
+    </section>
+
+    <!-- Properties Section - Replaced with index18.html version -->
+    <section id="properties" class="py-20 px-6">
+        <div class="container mx-auto">
+            <div class="text-center mb-16 fade-in">
+                <h2 class="text-4xl md:text-5xl font-bold mb-4">Featured Properties</h2>
+                <p class="text-xl text-gray-400">Discover our exclusive collection of luxury properties</p>
+            </div>
+            
+            <!-- Filter Section -->
+            <div class="mb-8 bg-gray-800 rounded-xl shadow-md p-6 filter-section fade-in">
+                <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+                    <h2 class="text-xl font-bold text-white">Refine Your Search</h2>
+                    <div class="flex space-x-2">
+                        <button @click="resetFilters" class="text-sm bg-gray-700 hover:bg-gray-600 px-3 py-1.5 rounded-lg transition">
+                            Clear Filters
+                        </button>
+                        <button @click="showFilters = !showFilters" class="md:hidden text-sm bg-gray-700 hover:bg-gray-600 px-3 py-1.5 rounded-lg transition flex items-center">
+                            <i class="fas fa-filter mr-1"></i> Filters
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6" :class="{'hidden md:grid': !showFilters}">
+                    <!-- Property Type Filter -->
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Property Type</label>
+                        <div class="flex flex-wrap gap-2">
+                            <template x-for="type in propertyTypes">
+                                <button 
+                                    @click="toggleFilter('type', type)"
+                                    class="px-3 py-1.5 rounded-full text-sm transition"
+                                    :class="{
+                                        'bg-blue-600 text-white': selectedFilters.type.includes(type),
+                                        'bg-gray-700 hover:bg-gray-600': !selectedFilters.type.includes(type)
+                                    }"
+                                    x-text="type"
+                                ></button>
+                            </template>
+                        </div>
+                    </div>
+                    
+                    <!-- Developer Filter -->
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Developer</label>
+                        <div class="flex flex-wrap gap-2">
+                            <template x-for="dev in developers">
+                                <button 
+                                    @click="toggleFilter('developer', dev)"
+                                    class="px-3 py-1.5 rounded-full text-sm transition"
+                                    :class="{
+                                        'bg-blue-600 text-white': selectedFilters.developer.includes(dev),
+                                        'bg-gray-700 hover:bg-gray-600': !selectedFilters.developer.includes(dev)
+                                    }"
+                                    x-text="dev"
+                                ></button>
+                            </template>
+                        </div>
+                    </div>
+                    
+                    <!-- Location Filter -->
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Location</label>
+                        <div class="flex flex-wrap gap-2">
+                            <template x-for="loc in locations">
+                                <button 
+                                    @click="toggleFilter('location', loc)"
+                                    class="px-3 py-1.5 rounded-full text-sm transition"
+                                    :class="{
+                                        'bg-blue-600 text-white': selectedFilters.location.includes(loc),
+                                        'bg-gray-700 hover:bg-gray-600': !selectedFilters.location.includes(loc)
+                                    }"
+                                    x-text="loc"
+                                ></button>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Property Count & Sort -->
+            <div class="flex flex-wrap items-center justify-between mb-6 fade-in">
+                <div class="text-lg">
+                    Found <span x-text="filteredProperties.length" class="font-bold text-white"></span> properties
+                </div>
+                <div class="flex items-center space-x-3">
+                    <span class="text-sm">Sort by:</span>
+                    <select x-model="sortBy" class="bg-gray-800 border border-gray-700 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
+                        <option value="priceLow">Price: Low to High</option>
+                        <option value="priceHigh">Price: High to Low</option>
+                        <option value="beds">Bedrooms: High to Low</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Property Grid -->
+            <template x-if="filteredProperties.length === 0">
+                <div class="text-center py-12 fade-in">
+                    <div class="text-5xl mb-4 text-gray-500">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h3 class="text-xl font-medium text-gray-400">No properties match your search criteria</h3>
+                    <p class="text-gray-500 mt-2">Try adjusting your filters or search term</p>
+                    <button @click="resetFilters" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                        Reset Filters
+                    </button>
+                </div>
+            </template>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 fade-in">
+                <template x-for="property in filteredProperties" :key="property.id">
+                    <div class="property-card bg-gray-800 rounded-xl overflow-hidden shadow-lg border border-gray-700">
+                        <!-- Property Image -->
+                        <div class="relative">
+                            <img 
+                                :src="property.image" 
+                                :alt="property.title" 
+                                class="property-image"
+                            >
+                            <div class="absolute top-3 right-3 bg-blue-600 text-white px-2 py-1 rounded-lg text-sm font-medium">
+                                <span x-text="property.status"></span>
+                            </div>
+                            <div class="absolute bottom-3 left-3 bg-gray-800 text-white px-3 py-1 rounded-lg font-bold">
+                                <span x-text="property.price"></span>
+                            </div>
+                        </div>
+                        
+                        <!-- Property Info -->
+                        <div class="p-5">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="font-bold text-lg mb-1" x-text="property.title"></h3>
+                                    <div class="flex items-center text-gray-400 mb-3">
+                                        <i class="fas fa-map-marker-alt text-blue-500 mr-1"></i>
+                                        <span x-text="property.location"></span>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col items-end">
+                                    <div class="bg-gray-700 text-gray-200 px-2 py-1 rounded text-sm" x-text="property.type"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Property Stats -->
+                            <div class="flex justify-between border-b border-gray-700 pb-3 mb-3">
+                                <div class="text-center">
+                                    <div class="text-gray-500 text-sm">Beds</div>
+                                    <div class="font-bold" x-text="property.bedrooms"></div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-gray-500 text-sm">Baths</div>
+                                    <div class="font-bold" x-text="property.bathrooms"></div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-gray-500 text-sm">Developer</div>
+                                    <div class="font-bold" x-text="property.developer"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Amenities -->
+                            <div class="mb-4">
+                                <h4 class="font-medium mb-2">Key Amenities:</h4>
+                                <div class="amenities-grid">
+                                    <template x-for="(amenity, index) in property.amenities.slice(0, 4)" :key="index">
+                                        <div class="flex items-center">
+                                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                                            <span class="text-sm" x-text="amenity"></span>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                            
+                            <!-- Action Buttons -->
+                            <div class="flex space-x-3">
+                                <a 
+                                    :href="'https://wa.me/971528284315?text=Hi, I am interested in ' + property.title" 
+                                    target="_blank"
+                                    class="flex-1 bg-green-600 hover:bg-green-700 text-white text-center py-2.5 rounded-lg transition flex items-center justify-center"
+                                >
+                                    <i class="fab fa-whatsapp mr-2 text-lg"></i> WhatsApp
+                                </a>
+                                <button 
+                                    @click="openDetails(property)" 
+                                    class="details-btn border border-gray-600 flex-1 text-gray-300 py-2.5 rounded-lg transition flex items-center justify-center"
+                                >
+                                    <i class="fas fa-info-circle mr-2"></i> Details
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+            
+            <!-- Load More Button -->
+            <div class="text-center mt-8 fade-in" x-show="filteredProperties.length > 0 && filteredProperties.length < properties.length">
+                <button 
+                    @click="loadMore" 
+                    class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition"
+                >
+                    Load More Properties
+                </button>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Property Details Modal -->
+    <div 
+        x-show="showDetails" 
+        x-cloak
+        class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4"
+        @click.self="showDetails = false"
+    >
+        <div 
+            x-show="showDetails" 
+            x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="opacity-0 transform scale-95"
+            x-transition:enter-end="opacity-100 transform scale-100"
+            x-transition:leave="transition ease-in duration-200"
+            x-transition:leave-start="opacity-100 transform scale-100"
+            x-transition:leave-end="opacity-0 transform scale-95"
+            class="bg-gray-800 rounded-xl w-full max-w-3xl max-h-[90vh] overflow-y-auto"
+        >
+            <div class="p-6">
+                <div class="flex justify-between items-start mb-4">
+                    <h2 class="text-2xl font-bold text-white" x-text="selectedProperty.title"></h2>
+                    <button @click="showDetails = false" class="text-gray-400 hover:text-gray-200">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <img :src="selectedProperty.image" :alt="selectedProperty.title" class="rounded-lg w-full h-64 object-cover">
+                    </div>
+                    <div>
+                        <div class="bg-gray-700 rounded-lg p-4 mb-4">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <div class="text-gray-400 text-sm">Price</div>
+                                    <div class="font-bold text-lg text-white" x-text="selectedProperty.price"></div>
+                                </div>
+                                <div>
+                                    <div class="text-gray-400 text-sm">Status</div>
+                                    <div class="font-bold" x-text="selectedProperty.status"></div>
+                                </div>
+                                <div>
+                                    <div class="text-gray-400 text-sm">Bedrooms</div>
+                                    <div class="font-bold" x-text="selectedProperty.bedrooms"></div>
+                                </div>
+                                <div>
+                                    <div class="text-gray-400 text-sm">Bathrooms</div>
+                                    <div class="font-bold" x-text="selectedProperty.bathrooms"></div>
+                                </div>
+                                <div>
+                                    <div class="text-gray-400 text-sm">Developer</div>
+                                    <div class="font-bold" x-text="selectedProperty.developer"></div>
+                                </div>
+                                <div>
+                                    <div class="text-gray-400 text-sm">Type</div>
+                                    <div class="font-bold" x-text="selectedProperty.type"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <a 
+                            :href="'https://wa.me/971528284315?text=Hi, I am interested in ' + selectedProperty.title" 
+                            target="_blank"
+                            class="w-full bg-green-600 hover:bg-green-700 text-white text-center py-3 rounded-lg transition flex items-center justify-center mb-3"
+                        >
+                            <i class="fab fa-whatsapp mr-2 text-xl"></i> Contact via WhatsApp
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="mb-6">
+                    <h3 class="text-xl font-semibold mb-3">Location</h3>
+                    <div class="flex items-center text-gray-300 mb-2">
+                        <i class="fas fa-map-marker-alt text-blue-500 mr-2"></i>
+                        <span x-text="selectedProperty.location"></span>
+                    </div>
+                    <div class="bg-gray-700 border-2 border-dashed rounded-xl w-full h-48 flex items-center justify-center text-gray-500">
+                        Property Location Map
+                    </div>
+                </div>
+                
+                <div class="mb-6">
+                    <h3 class="text-xl font-semibold mb-3">Amenities & Features</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                        <template x-for="(amenity, index) in selectedProperty.amenities" :key="index">
+                            <div class="flex items-center bg-gray-700 p-3 rounded-lg">
+                                <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                                <span x-text="amenity"></span>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="text-xl font-semibold mb-3">Agent Information</h3>
+                    <div class="flex items-center bg-gray-700 p-4 rounded-lg">
+                        <div class="bg-gray-600 border-2 border-dashed rounded-xl w-16 h-16 mr-4"></div>
+                        <div>
+                            <div class="font-bold">ZAIN UL ABIDIN</div>
+                            <div class="text-gray-400 text-sm">Senior Property Consultant</div>
+                            <div class="flex mt-2">
+                                <a href="tel:+971528284315" class="text-blue-400 hover:text-blue-300 mr-3">
+                                    <i class="fas fa-phone-alt"></i> +971 52 828 4315
+                                </a>
+                                <a href="mailto:info@zuahomes.com" class="text-blue-400 hover:text-blue-300">
+                                    <i class="fas fa-envelope"></i> info@zuahomes.com
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Form Section -->
+    <section id="contact" class="py-20 bg-white text-black">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16 fade-in">
+                <h2 class="text-4xl md:text-5xl font-bold mb-4">Get In Touch</h2>
+                <p class="text-xl text-gray-600">Ready to find your dream property? Contact us today!</p>
+            </div>
+            
+            <div class="max-w-2xl mx-auto fade-in">
+                <form id="contact-form" class="space-y-6">
+                    <div>
+                        <label for="fullName" class="block text-sm font-medium mb-2">Full Name</label>
+                        <input type="text" id="fullName" name="fullName" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black">
+                    </div>
+                    
+                    <div>
+                        <label for="phone" class="block text-sm font-medium mb-2">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black">
+                    </div>
+                    
+                    <div>
+                        <label for="propertyType" class="block text-sm font-medium mb-2">Property Type</label>
+                        <select id="propertyType" name="propertyType" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black">
+                            <option value="">Select Property Type</option>
+                            <option value="Apartment">Apartment</option>
+                            <option value="Villa">Villa</option>
+                            <option value="Townhouse">Townhouse</option>
+                            <option value="Commercial">Commercial</option>
+                            <option value="Plot">Plot</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="message" class="block text-sm font-medium mb-2">Message</label>
+                        <textarea id="message" name="message" rows="4" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"></textarea>
+                    </div>
+                    
+                    <button type="submit" class="w-full bg-green-600 text-white px-6 py-4 rounded-lg font-semibold hover:bg-green-700 transition-colors flex items-center justify-center">
+                        <i class="fab fa-whatsapp mr-2 text-xl"></i>
+                        Send via WhatsApp
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Social Media Section -->
+    <section id="social" class="py-16 bg-gray-900">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row items-center justify-between fade-in">
+                <div class="logo-container mb-8 md:mb-0">
+                    <img src="https://iili.io/Fk8MqJ4.md.jpg" alt="ZUA HOMES" class="h-16 w-auto">
+                    <span class="logo-text">ZUA HOMES</span>
+                </div>
+                
+                <div class="flex space-x-6">
+                    <a href="https://www.instagram.com/zainrealtor?igsh=cGVvdnU0NXJxaGV4" target="_blank" class="social-icon bg-gradient-to-r from-purple-500 to-pink-500 p-4 rounded-full text-white hover:scale-110 transition-all duration-300">
+                        <i class="fab fa-instagram text-2xl"></i>
+                    </a>
+                    <a href="https://www.facebook.com/zain3111?mibextid=ZbWKwL" target="_blank" class="social-icon bg-blue-600 p-4 rounded-full text-white hover:scale-110 transition-all duration-300">
+                        <i class="fab fa-facebook-f text-2xl"></i>
+                    </a>
+                    <a href="https://www.tiktok.com/@zain.zua?_t=ZS-8yKaQRO4hG6&_r=1" target="_blank" class="social-icon bg-black p-4 rounded-full text-white hover:scale-110 transition-all duration-300">
+                        <i class="fab fa-tiktok text-2xl"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Us Section -->
+    <section id="about" class="py-20 relative overflow-hidden">
+        <div class="absolute inset-0 bg-cover bg-center bg-no-repeat" style="background-image: url('https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2053&q=80');">
+            <div class="absolute inset-0 bg-black bg-opacity-70"></div>
+        </div>
+        
+        <div class="relative z-10 container mx-auto px-6 text-center">
+            <div class="max-w-4xl mx-auto fade-in">
+                <h2 class="text-4xl md:text-5xl font-bold mb-8">About ZUA HOMES</h2>
+                <p class="text-xl mb-12 text-gray-300 leading-relaxed">
+                    At ZUA HOMES REAL ESTATE LLC, we believe that finding the perfect home is more than just a transaction—it's about discovering a place where memories are made and dreams come to life. With years of experience in Dubai's luxury real estate market, we specialize in connecting discerning clients with exceptional properties that reflect their lifestyle and aspirations.
+                </p>
+                <blockquote class="text-2xl italic text-gray-200 mb-8">
+                    "Luxury is not a place — it's a feeling."
+                </blockquote>
+                <p class="text-lg text-gray-300">
+                    Led by ZAIN UL ABIDIN, our dedicated team combines deep market knowledge with personalized service to ensure every client finds their perfect property match.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter Section -->
+    <section id="newsletter" class="py-16 bg-gray-800">
+        <div class="container mx-auto px-6 text-center">
+            <div class="max-w-2xl mx-auto fade-in">
+                <h2 class="text-3xl font-bold mb-4">Stay Updated</h2>
+                <p class="text-gray-400 mb-8">Subscribe to our newsletter for the latest property listings and market insights</p>
+                
+                <form id="newsletter-form" class="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+                    <input type="email" placeholder="Enter your email" required class="flex-1 px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white">
+                    <button type="submit" class="px-6 py-3 bg-white text-black rounded-lg font-semibold hover:bg-gray-200 transition-colors">
+                        Subscribe
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-black py-16">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+                <!-- Contact Info -->
+                <div>
+                    <h3 class="text-2xl font-bold mb-6">Contact Us</h3>
+                    <div class="space-y-4">
+                        <p class="flex items-center">
+                            <i class="fas fa-phone mr-3 text-green-500"></i>
+                            +971 52 828 4315
+                        </p>
+                        <p class="flex items-center">
+                            <i class="fas fa-envelope mr-3 text-blue-500"></i>
+                            info@zuahomes.com
+                        </p>
+                        <p class="flex items-center">
+                            <i class="fas fa-map-marker-alt mr-3 text-red-500"></i>
+                            Dubai, UAE
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Quick Links -->
+                <div>
+                    <h3 class="text-2xl font-bold mb-6">Quick Links</h3>
+                    <div class="space-y-2">
+                        <a href="#properties" class="block hover:text-gray-300 transition-colors">Properties</a>
+                        <a href="#about" class="block hover:text-gray-300 transition-colors">About Us</a>
+                        <a href="#contact" class="block hover:text-gray-300 transition-colors">Contact</a>
+                        <a href="#" class="block hover:text-gray-300 transition-colors">Privacy Policy</a>
+                    </div>
+                </div>
+                
+                <!-- Company Info -->
+                <div>
+                    <h3 class="text-2xl font-bold mb-6">ZUA HOMES</h3>
+                    <p class="text-gray-400">
+                        Your trusted partner in Dubai's luxury real estate market. We're committed to helping you find the perfect property that matches your lifestyle and investment goals.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 pt-8 text-center fade-in">
+                <p class="text-gray-400">© 2025 ZUA HOMES REAL ESTATE LLC — All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scroll to Top Button -->
+    <button 
+        @click="window.scrollTo({ top: 0, behavior: 'smooth' })" 
+        :class="{'visible': scrollPosition > 300, 'invisible': scrollPosition <= 300}"
+        class="scroll-to-top bg-blue-600 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:bg-blue-700 transition"
+    >
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <script>
+        // Alpine.js App
+        function app() {
+            return {
+                darkMode: localStorage.getItem('darkMode') === 'true',
+                searchTerm: '',
+                showFilters: false,
+                scrollPosition: 0,
+                sortBy: 'priceLow',
+                showDetails: false,
+                visibleProperties: 12,
+                selectedProperty: {},
+                selectedFilters: {
+                    type: [],
+                    developer: [],
+                    location: []
+                },
+                properties: [
+                    {
+                        id: 1,
+                        title: "Azizi Riviera Phase 4",
+                        developer: "Azizi Developments",
+                        location: "Meydan One, Meydan City, Dubai",
+                        price: "AED 670,000",
+                        bedrooms: "Studio, 1, 2, 3",
+                        bathrooms: "4",
+                        type: "Apartment",
+                        status: "Off-plan",
+                        image: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                        amenities: ["High-class living", "Premium finishes", "Lagoon & Central Park View", "Swimming pool", "Gym", "Kids play area"]
+                    },
+                    {
+                        id: 2,
+                        title: "Azizi Ruby",
+                        developer: "Azizi Developments",
+                        location: "Jumeirah Village Circle (JVC) District 15, Dubai",
+                        price: "AED 624,000",
+                        bedrooms: "Studio, 1, 2, 3",
+                        bathrooms: "2",
+                        type: "Apartment",
+                        status: "Off-plan",
+                        image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                        amenities: ["Clubhouse", "Cinema", "Swimming pools", "State-of-the-art gym", "Children play areas"]
+                    },
+                    {
+                        id: 3,
+                        title: "Azizi Wasel",
+                        developer: "Azizi Developments",
+                        location: "Dubai Islands, Dubai",
+                        price: "AED 949,999",
+                        bedrooms: "Studio, 1, 2, 3",
+                        bathrooms: "3",
+                        type: "Apartment",
+                        status: "Off-plan",
+                        image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                        amenities: ["Sea views", "Cinema", "Clubhouse", "Swimming pools", "State-of-the-art gym"]
+                    },
+                    {
+                        id: 4,
+                        title: "Bayview by Address",
+                        developer: "Emaar Properties",
+                        location: "Emaar Beachfront, Dubai Harbour",
+                        price: "AED 3,300,000",
+                        bedrooms: "1, 2, 3, 4",
+                        bathrooms: "4",
+                        type: "Apartment",
+                        status: "Off-plan",
+                        image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                        amenities: ["Infinity Pool", "Wet Deck", "Kids Pool Area", "Beach Access", "Landscaped Garden"]
+                    },
+                    {
+                        id: 5,
+                        title: "Belgravia Gardens",
+                        developer: "Ellington Properties",
+                        location: "Dubailand, Dubai",
+                        price: "AED 1,200,000",
+                        bedrooms: "Studio, 1, 2, 3, 4",
+                        bathrooms: "3",
+                        type: "Apartment",
+                        status: "Ready",
+                        image: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                        amenities: ["Mini-golf", "Kids pool", "Basketball court", "Dog park", "Lazy river"]
+                    },
+                    {
+                        id: 6,
+                        title: "Bugatti Residences",
+                        developer: "Binghatti Developers",
+                        location: "Business Bay, Dubai",
+                        price: "AED 19,090,000",
+                        bedrooms: "2, 3, 4",
+                        bathrooms: "4",
+                        type: "Apartment",
+                        status: "Off-plan",
+                        image: "https://images.unsplash.com/photo-1613977257363-707ba9348227?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                        amenities: ["French Riviera design", "Floor-to-ceiling windows", "High ceilings", "Private retreat"]
+                    },
+                    {
+                        id: 7,
+                        title: "DAMAC Lagoons – Venice",
+                        developer: "DAMAC Properties",
+                        location: "DAMAC Lagoons, Dubai",
+                        price: "AED 4,900,000",
+                        bedrooms: "6-7",
+                        bathrooms: "7",
+                        type: "Villa",
+                        status: "Off-plan",
+                        image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                        amenities: ["Waterfront development", "Gondola rides", "High-end retail", "Fine dining", "Water parks"]
+                    },
+                    {
+                        id: 8,
+                        title: "Danube Oceanz",
+                        developer: "Danube Properties",
+                        location: "Dubai Maritime City, Dubai",
+                        price: "AED 1,200,000",
+                        bedrooms: "Studio, 1, 2, 3, 4",
+                        bathrooms: "3",
+                        type: "Apartment",
+                        status: "Off-plan",
+                        image: "https://images.unsplash.com/photo-1560448204-603b3fc33ddc?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                        amenities: ["Breathtaking ocean vistas", "Opulent interiors", "Tonino Lamborghini furnishings", "35+ amenities"]
+                    },
+                    {
+                        id: 9,
+                        title: "Golf Lane Villas",
+                        developer: "Emaar Properties",
+                        location: "Emaar South, Dubai",
+                        price: "AED 4,480,000",
+                        bedrooms: "4-5",
+                        bathrooms: "5",
+                        type: "Villa",
+                        status: "Off-plan",
+                        image: "https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                        amenities: ["18-Hole Golf Course", "Community Centre", "Linear Park", "Swimming Pools", "Fully Equipped Gym"]
+                    },
+                    
+                    {
+                        id: 11,
+                        title: "Royal Atlantis Residences",
+                        developer: "Kerzner International",
+                        location: "Palm Jumeirah, Dubai",
+                        price: "AED 7,200,000",
+                        bedrooms: "2-6",
+                        bathrooms: "5",
+                        type: "Apartment",
+                        status: "Ready",
+                        image: "https://images.unsplash.com/photo-1613977257363-707ba9348227?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                        amenities: ["Private pools", "Landscaped gardens", "Ocean views", "Access to Atlantis resort amenities"]
+                    },
+                    {
+                        id: 12,
+                        title: "Sobha Hartland II",
+                        developer: "Sobha Realty",
+                        location: "Bukadra, Dubai",
+                        price: "AED 1,300,000",
+                        bedrooms: "1-6",
+                        bathrooms: "4",
+                        type: "Apartment",
+                        status: "Off-plan",
+                        image: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                        amenities: ["Crystal lagoon", "Clubhouse", "Religious facilities", "School", "Beach Access"]
+                    },
+                    {
+                        id: 13,
+                        title: "The Cove II",
+                        developer: "Emaar Properties",
+                        location: "Dubai Creek Harbour, Dubai",
+                        price: "AED 1,300,000",
+                        bedrooms: "1-4",
+                        bathrooms: "3",
+                        type: "Apartment",
+                        status: "Off-plan",
+                        image: "https://images.unsplash.com/photo-1560448204-603b3fc33ddc?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                        amenities: ["Waterfront living", "Dining Outlets", "Gymnasium", "Health Care Centre", "Swimming Pool"]
+                    },
+                    
+                    {
+                        id: 15,
+                        title: "Violet 4 Phase 2",
+                        developer: "DAMAC Properties",
+                        location: "DAMAC Hills 2, Dubai",
+                        price: "AED 1,600,000",
+                        bedrooms: "4",
+                        bathrooms: "4",
+                        type: "Townhouse",
+                        status: "Off-plan",
+                        image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                        amenities: ["Community park", "Swimming pools", "Kids play area", "Jogging tracks", "Retail outlets"]
+                    },
+                    {
+                        id: 16,
+                        title: "Selvara Villas",
+                        developer: "Grand Polo Club",
+                        location: "Grand Polo Club, Dubai",
+                        price: "AED 8,000,000",
+                        bedrooms: "5-6",
+                        bathrooms: "5",
+                        type: "Villa",
+                        status: "Off-plan",
+                        image: "https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                        amenities: ["Polo field views", "Private gardens", "Community clubhouse", "Swimming pools", "Equestrian facilities"]
+                    },
+                    {
+                        id: 17,
+                        title: "Hayat Community",
+                        developer: "Hayat Properties",
+                        location: "Dubai South, Dubai",
+                        price: "AED 1,900,000",
+                        bedrooms: "3-5",
+                        bathrooms: "3",
+                        type: "Villa",
+                        status: "Off-plan",
+                        image: "https://images.unsplash.com/photo-1600585152915-d208bec867a1?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                        amenities: ["Wellness centers", "Yoga studios", "Organic gardens", "Meditation zones", "Walking trails"]
+                    },
+                    {
+                        id: 18,
+                        title: "R. Hills",
+                        developer: "Dubailand Properties",
+                        location: "Dubailand, Dubai",
+                        price: "AED 1,500,000",
+                        bedrooms: "3-4",
+                        bathrooms: "3",
+                        type: "Townhouse",
+                        status: "Off-plan",
+                        image: "https://images.unsplash.com/photo-1605146769289-440113cc3d00?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                        amenities: ["Community parks", "Swimming pools", "Fitness centers", "Kids play areas", "Retail outlets"]
+                    },
+                    {
+                        id: 19,
+                        title: "Bo Monde",
+                        developer: "Tilal Al Ghaf",
+                        location: "Tilal Al Ghaf, Dubai",
+                        price: "AED 25,000,000",
+                        bedrooms: "6-8",
+                        bathrooms: "7",
+                        type: "Villa",
+                        status: "Off-plan",
+                        image: "https://images.unsplash.com/photo-1613977257592-4871e5fcd7c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                        amenities: ["Private beach access", "Home automation", "Private cinemas", "Infinity pools", "Landscaped gardens"]
+                    },
+                    {
+                        id: 20,
+                        title: "Ciel Marina",
+                        developer: "Ciel Properties",
+                        location: "Dubai Marina, Dubai",
+                        price: "AED 1,400,000",
+                        bedrooms: "1-3",
+                        bathrooms: "2",
+                        type: "Apartment",
+                        status: "Ready",
+                        image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                        amenities: ["Marina views", "Infinity pool", "State-of-the-art gym", "24/7 Concierge", "Private balconies"]
+                    },
+                    {
+                        id: 21,
+                        title: "Burj Azizi",
+                        developer: "Azizi Developments",
+                        location: "Sheikh Zayed Road, Dubai",
+                        price: "AED 50,000,000",
+                        bedrooms: "N/A",
+                        bathrooms: "N/A",
+                        type: "Commercial",
+                        status: "Underway",
+                        image: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                        amenities: ["Premium retail spaces", "Office spaces", "Luxury residences", "Fine dining", "Observation deck"]
+                    },
+                    [
+  {
+    "id": 1,
+    "title": "Cresswell Residences at Dubai South",
+    "developer": "ESNAD Management",
+    "type": "Apartments",
+    "bedrooms": "1-3 BR",
+    "startingPrice": "AED 718,000",
+    "handover": "Q4 2025",
+    "image": "https://dxboffplan.com/wp-content/uploads/2025/02/maak-residence-dubai-south.jpg",  // Placeholder image (actual project image not found in search)
+    "amenities": [
+      "Rooftop pool",
+      "Gym",
+      "Kids' play area",
+      "Steam room"
+    ],
+    "links": [
+      {
+        "source": "DxbOffplan",
+        "url": "https://dxboffplan.com/properties/cresswell-residences-dubai-south/"  // Working link:cite[2]
+      },
+      {
+        "source": "Inside Realty",
+        "url": "https://insiderealty.ae/en/projects/cresswell-residences-dubai-south-apartments-for-sale"  // Working link:cite[4]
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "title": "MAAK Residence",
+    "developer": "MaakDream",
+    "type": "Apartments",
+    "bedrooms": "1-3 BR",
+    "startingPrice": "AED 521,250",
+    "handover": "Q2 2027",
+    "image": "https://dxboffplan.com/wp-content/uploads/2025/02/maak-residence-dubai-south.jpg",  // Placeholder image
+    "amenities": [
+      "Swimming pool",
+      "Retail outlets"
+    ],
+    "links": [
+      {
+        "source": "DxbOffplan",
+        "url": "https://dxboffplan.com/property-status/2027/"  // Working link:cite[2]
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "title": "Aizel Tower",
+    "developer": "MaakDream",
+    "type": "Apartments",
+    "bedrooms": "Studio-2 BR",
+    "startingPrice": "AED 497,705",
+    "handover": "Q1 2027",
+    "image": "https://dubai.dubizzle.com/uploads/projects/aizel-tower-international-city.jpg",  // Placeholder image
+    "amenities": [
+      "Smart layouts",
+      "Near Dragon Mart"
+    ],
+    "links": [
+      {
+        "source": "Dubizzle",
+        "url": "https://dubai.dubizzle.com/new-projects/maak-dream-one-properties-llc/aizel-tower/"  // Working link (assumed, not in search)
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "title": "Baystar by VIDA",
+    "developer": "Emaar Properties",
+    "type": "Apartments",
+    "bedrooms": "1-4 BR",
+    "startingPrice": "AED 2,100,000",
+    "handover": "Q4 2029",
+    "image": "https://opr.ae/media/projects/baystar-vida-rashid-yachts-marina.jpg",  // Working image link:cite[4]
+    "links": [
+      {
+        "source": "OPR",
+        "url": "https://opr.ae/projects/baystar-by-vida-emaar-rashid-yachts-marina"  // Working link:cite[4]
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "title": "California Village Villas",
+    "developer": "GFH Real Estate",
+    "type": "Villas/Townhouses",
+    "bedrooms": "3-5 BR",
+    "startingPrice": "Ask Price",
+    "handover": "Q3 2025",
+    "image": "https://famproperties.com/images/california-village-dubailand.jpg",  // Placeholder image
+    "links": [
+      {
+        "source": "FamProperties",
+        "url": "https://famproperties.com/wadi-al-safa-4/california-village/3-bedroom-Townhouse-for-Sale-103636"  // Working link:cite[5]
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "title": "Binghatti Flare",
+    "developer": "Binghatti Developers",
+    "type": "Apartments",
+    "bedrooms": "Studio-1 BR",
+    "startingPrice": "AED 800,000",
+    "handover": "Coming Soon",
+    "image": "https://silverstonelr.com/uploads/projects/binghatti-flare-jvt.jpg",  // Placeholder image
+    "links": [
+      {
+        "source": "Silverstone",
+        "url": "https://silverstonelr.com/project-detail/2377/"  // Working link (assumed, not in search)
+      }
+    ]
+  }
+]
+                ],
+                
+                // Computed properties
+                get propertyTypes() {
+                    return [...new Set(this.properties.map(p => p.type))];
+                },
+                
+                get developers() {
+                    return [...new Set(this.properties.map(p => p.developer))];
+                },
+                
+                get locations() {
+                    return [...new Set(this.properties.map(p => p.location))];
+                },
+                
+                get filteredProperties() {
+                    let result = this.properties;
+                    
+                    // Apply search term
+                    if (this.searchTerm) {
+                        const term = this.searchTerm.toLowerCase();
+                        result = result.filter(p => 
+                            p.title.toLowerCase().includes(term) ||
+                            p.developer.toLowerCase().includes(term) ||
+                            p.location.toLowerCase().includes(term)
+                        );}
+                    
+                    // Apply type filter
+                    if (this.selectedFilters.type.length > 0) {
+                        result = result.filter(p => this.selectedFilters.type.includes(p.type));
+                    }
+                    
+                    // Apply developer filter
+                    if (this.selectedFilters.developer.length > 0) {
+                        result = result.filter(p => this.selectedFilters.developer.includes(p.developer));
+                    }
+                    
+                    // Apply location filter
+                    if (this.selectedFilters.location.length > 0) {
+                        result = result.filter(p => this.selectedFilters.location.includes(p.location));
+                    }
+                    
+                    // Apply sorting
+                    if (this.sortBy === 'priceLow') {
+                        result = result.sort((a, b) => {
+                            const aPrice = parseFloat(a.price.replace(/[^\d.]/g, ''));
+                            const bPrice = parseFloat(b.price.replace(/[^\d.]/g, ''));
+                            return aPrice - bPrice;
+                        });
+                    } else if (this.sortBy === 'priceHigh') {
+                        result = result.sort((a, b) => {
+                            const aPrice = parseFloat(a.price.replace(/[^\d.]/g, ''));
+                            const bPrice = parseFloat(b.price.replace(/[^\d.]/g, ''));
+                            return bPrice - aPrice;
+                        });
+                    } else if (this.sortBy === 'beds') {
+                        result = result.sort((a, b) => {
+                            const aBeds = parseInt(a.bedrooms.split('-')[0]);
+                            const bBeds = parseInt(b.bedrooms.split('-')[0]);
+                            return bBeds - aBeds;
+                        });
+                    }
+                    
+                    // Limit to visible properties
+                    return result.slice(0, this.visibleProperties);
+                },
+                
+                // Methods
+                toggleFilter(filterType, value) {
+                    const index = this.selectedFilters[filterType].indexOf(value);
+                    if (index === -1) {
+                        this.selectedFilters[filterType].push(value);
+                    } else {
+                        this.selectedFilters[filterType].splice(index, 1);
+                    }
+                },
+                
+                resetFilters() {
+                    this.selectedFilters = {
+                        type: [],
+                        developer: [],
+                        location: []
+                    };
+                    this.searchTerm = '';
+                    this.showFilters = false;
+                    this.visibleProperties = 12;
+                },
+                
+                loadMore() {
+                    this.visibleProperties += 6;
+                },
+                
+                openDetails(property) {
+                    this.selectedProperty = property;
+                    this.showDetails = true;
+                },
+                
+                handleScroll() {
+                    this.scrollPosition = window.scrollY;
+                },
+                
+                init() {
+                    // Initialize dark mode preference
+                    if (localStorage.getItem('darkMode') === null) {
+                        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                        this.darkMode = prefersDark;
+                    }
+                    
+                    // Watch scroll position
+                    window.addEventListener('scroll', this.handleScroll.bind(this));
+                    this.handleScroll();
+                    
+                    // Watch dark mode changes
+                    this.$watch('darkMode', value => {
+                        localStorage.setItem('darkMode', value);
+                    });
+                }
+            }
+        }
+
+        // Existing JavaScript from index7.html
+        document.addEventListener('DOMContentLoaded', function() {
+            setupScrollAnimations();
+            
+            // Mobile menu toggle
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+            
+            // Contact form submission
+            const contactForm = document.getElementById('contact-form');
+            contactForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+                const fullName = formData.get('fullName');
+                const phone = formData.get('phone');
+                const propertyType = formData.get('propertyType');
+                const message = formData.get('message');
+
+                const whatsappMessage = `Hello ZAIN UL ABIDIN (ZUA HOMES),%0A%0AI am ${fullName} and I am interested in a property.%0A%0APhone: ${phone}%0AProperty Type: ${propertyType}%0AMessage: ${message}%0A%0APlease contact me at your earliest convenience.`;
+                window.open(`https://wa.me/971528284315?text=${whatsappMessage}`, '_blank');
+            });
+            
+            // Newsletter form submission
+            const newsletterForm = document.getElementById('newsletter-form');
+            newsletterForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('Thank you for subscribing to our newsletter!');
+                this.reset();
+            });
+        });
+
+        function scrollToProperties() {
+            document.getElementById('properties').scrollIntoView({
+                behavior: 'smooth'
+            });
+        }
+
+        function setupScrollAnimations() {
+            const faders = document.querySelectorAll('.fade-in');
+            const appearOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const appearOnScroll = new IntersectionObserver(function(entries, appearOnScroll) {
+                entries.forEach(entry => {
+                    if (!entry.isIntersecting) {
+                        return;
+                    }
+                    entry.target.classList.add('visible');
+                    appearOnScroll.unobserve(entry.target);
+                });
+            }, appearOptions);
+
+            faders.forEach(fader => {
+                appearOnScroll.observe(fader);
+            });
+        }
+        // ... existing Alpine.js and JavaScript ...
+
+        // Enhanced mobile menu toggle
+        document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+            document.body.style.overflow = menu.classList.contains('hidden') ? '' : 'hidden';
+        });
+
+        // Close mobile menu when clicking links
+        document.querySelectorAll('#mobile-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                document.getElementById('mobile-menu').classList.add('hidden');
+                document.body.style.overflow = '';
+            });
+        });
+
+        // Improved theme toggle
+        document.getElementById('theme-toggle').addEventListener('click', function() {
+            const isDark = document.documentElement.classList.contains('dark');
+            document.documentElement.classList.toggle('dark', !isDark);
+            localStorage.setItem('darkMode', !isDark);
+            
+            // Update icon
+            const icon = this.querySelector('i');
+            icon.classList.toggle('fa-moon', isDark);
+            icon.classList.toggle('fa-sun', !isDark);
+        });
+
+        // Initialize theme
+        function initTheme() {
+            const savedTheme = localStorage.getItem('darkMode');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const isDark = savedTheme ? JSON.parse(savedTheme) : prefersDark;
+            
+            document.documentElement.classList.toggle('dark', isDark);
+            
+            // Set correct icon
+            const icon = document.querySelector('#theme-toggle i');
+            icon.classList.toggle('fa-moon', isDark);
+            icon.classList.toggle('fa-sun', !isDark);
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', function() {
+            initTheme();
+            // ... other initialization ...
+        });
+
+        // Handle foldable devices
+        function handleFoldableResize() {
+            const foldable = window.matchMedia('(spanning: single-fold-vertical)').matches;
+            if (foldable) {
+                document.body.classList.add('foldable');
+            } else {
+                document.body.classList.remove('foldable');
+            }
+        }
+
+        window.addEventListener('resize', handleFoldableResize);
+        handleFoldableResize();
+    </script>
+</body>
+</html>
