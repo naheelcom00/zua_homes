@@ -3,6 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Discover luxury properties in Dubai with ZUA HOMES. Find your dream home, villa, apartment, or commercial property.">
+    <meta property="og:title" content="ZUA HOMES REAL ESTATE LLC - Luxury Properties in Dubai">
+    <meta property="og:description" content="Your trusted partner for luxury real estate in Dubai. Find exclusive properties from top developers.">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1512453979798-5ea266f8880c">
+    <meta property="og:url" content="https://zuahomes.com">
+    <meta name="twitter:card" content="summary_large_image">
+    
     <title>ZUA HOMES REAL ESTATE LLC - Your Dream Home Awaits</title>
     
     <!-- Tailwind CSS CDN -->
@@ -18,6 +25,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
+        html {
+            scroll-behavior: smooth;
+        }
+        
         body {
             font-family: 'Poppins', sans-serif;
         }
@@ -117,6 +128,9 @@
             width: 100%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.9);
+            overflow-y: auto;
+            padding: 20px;
+            box-sizing: border-box;
         }
         
         .modal.show {
@@ -144,10 +158,19 @@
             font-weight: bold;
             color: #fff;
             cursor: pointer;
+            z-index: 10;
+            background: rgba(0,0,0,0.7);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         .close:hover {
             color: #ccc;
+            background: rgba(0,0,0,0.9);
         }
 
         /* Custom Logo Styles */
@@ -207,7 +230,7 @@
             background: #555;
         }
         
-        /* New additions from index18.html */
+        /* Property card styles */
         .property-card {
             transition: all 0.3s ease;
             box-shadow: 0 4px 6px rgba(0,0,0,0.05);
@@ -221,9 +244,6 @@
         }
         .dark .property-card:hover {
             box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-        }
-        .filter-section {
-            transition: all 0.3s ease;
         }
         .details-btn {
             transition: all 0.3s ease;
@@ -253,6 +273,8 @@
         .scroll-to-top.visible {
             opacity: 1;
         }
+        
+        /* Mobile-specific styles */
         @media (max-width: 768px) {
             .property-image {
                 height: 180px;
@@ -260,6 +282,30 @@
             .amenities-grid {
                 grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
             }
+            .modal-content {
+                padding: 1.5rem;
+                width: 95%;
+            }
+            .close {
+                top: 10px;
+                right: 15px;
+                font-size: 24px;
+            }
+        }
+        
+        /* Ensure images don't overflow on mobile */
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* Agent info styles */
+        .agent-card {
+            background-color: rgba(255, 215, 0, 0.1);
+            border-left: 4px solid gold;
+        }
+        .agent-photo {
+            border: 2px solid gold;
         }
     </style>
 </head>
@@ -270,7 +316,7 @@
         <div class="container mx-auto px-6 flex items-center justify-between">
             <!-- Logo -->
             <div class="logo-container">
-                <img src="https://iili.io/Fk8MqJ4.md.jpg" alt="ZUA HOMES" class="h-12 w-auto">
+                <img src="https://iili.io/Fk8MqJ4.md.jpg" alt="ZUA HOMES" class="h-12 w-auto" loading="lazy">
                 <span class="logo-text">ZUA HOMES</span>
             </div>
             
@@ -329,7 +375,7 @@
         </div>
     </section>
 
-    <!-- Properties Section - Replaced with index18.html version -->
+    <!-- Properties Section -->
     <section id="properties" class="py-20 px-6">
         <div class="container mx-auto">
             <div class="text-center mb-16 fade-in">
@@ -337,8 +383,22 @@
                 <p class="text-xl text-gray-400">Discover our exclusive collection of luxury properties</p>
             </div>
             
-            <!-- Filter Section -->
-            <div class="mb-8 bg-gray-800 rounded-xl shadow-md p-6 filter-section fade-in">
+            <!-- Search Box -->
+            <div class="mb-6 fade-in">
+                <div class="relative">
+                    <input 
+                        id="property-search"
+                        type="text" 
+                        placeholder="Search properties..." 
+                        class="w-full px-4 py-3 rounded-lg bg-gray-800 border border-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        x-model="searchTerm"
+                    >
+                    <i class="fas fa-search absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                </div>
+            </div>
+            
+            <!-- Filter Section - Removed sticky positioning -->
+            <div class="mb-8 bg-gray-800 rounded-xl shadow-md p-6 fade-in">
                 <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
                     <h2 class="text-xl font-bold text-white">Refine Your Search</h2>
                     <div class="flex space-x-2">
@@ -408,6 +468,7 @@
                 </div>
             </div>
             
+            
             <!-- Property Count & Sort -->
             <div class="flex flex-wrap items-center justify-between mb-6 fade-in">
                 <div class="text-lg">
@@ -446,6 +507,7 @@
                                 :src="property.image" 
                                 :alt="property.title" 
                                 class="property-image"
+                                loading="lazy"
                             >
                             <div class="absolute top-3 right-3 bg-blue-600 text-white px-2 py-1 rounded-lg text-sm font-medium">
                                 <span x-text="property.status"></span>
@@ -502,7 +564,7 @@
                             <!-- Action Buttons -->
                             <div class="flex space-x-3">
                                 <a 
-                                    :href="'https://wa.me/971528284315?text=Hi, I am interested in ' + property.title" 
+                                    :href="'https://wa.me/971528284315?text=Hi%20ZUA%20HOMES%2C%20I%20am%20interested%20in%20' + encodeURIComponent(property.title)" 
                                     target="_blank"
                                     class="flex-1 bg-green-600 hover:bg-green-700 text-white text-center py-2.5 rounded-lg transition flex items-center justify-center"
                                 >
@@ -552,14 +614,14 @@
             <div class="p-6">
                 <div class="flex justify-between items-start mb-4">
                     <h2 class="text-2xl font-bold text-white" x-text="selectedProperty.title"></h2>
-                    <button @click="showDetails = false" class="text-gray-400 hover:text-gray-200">
-                        <i class="fas fa-times text-xl"></i>
+                    <button @click="showDetails = false" class="close">
+                        <i class="fas fa-times"></i>
                     </button>
                 </div>
                 
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
                     <div>
-                        <img :src="selectedProperty.image" :alt="selectedProperty.title" class="rounded-lg w-full h-64 object-cover">
+                        <img :src="selectedProperty.image" :alt="selectedProperty.title" class="rounded-lg w-full h-64 object-cover" loading="lazy">
                     </div>
                     <div>
                         <div class="bg-gray-700 rounded-lg p-4 mb-4">
@@ -592,7 +654,7 @@
                         </div>
                         
                         <a 
-                            :href="'https://wa.me/971528284315?text=Hi, I am interested in ' + selectedProperty.title" 
+                            :href="'https://wa.me/971528284315?text=Hi%20ZUA%20HOMES%2C%20I%20am%20interested%20in%20' + encodeURIComponent(selectedProperty.title)" 
                             target="_blank"
                             class="w-full bg-green-600 hover:bg-green-700 text-white text-center py-3 rounded-lg transition flex items-center justify-center mb-3"
                         >
@@ -624,27 +686,31 @@
                     </div>
                 </div>
                 
-                <div>
-                    <h3 class="text-xl font-semibold mb-3">Agent Information</h3>
-                    <div class="flex items-center bg-gray-700 p-4 rounded-lg">
-                        <div class="bg-gray-600 border-2 border-dashed rounded-xl w-16 h-16 mr-4"></div>
-                        <div>
-                            <div class="font-bold">ZAIN UL ABIDIN</div>
-                            <div class="text-gray-400 text-sm">Senior Property Consultant</div>
-                            <div class="flex mt-2">
-                                <a href="tel:+971528284315" class="text-blue-400 hover:text-blue-300 mr-3">
-                                    <i class="fas fa-phone-alt"></i> +971 52 828 4315
-                                </a>
-                                <a href="mailto:info@zuahomes.com" class="text-blue-400 hover:text-blue-300">
-                                    <i class="fas fa-envelope"></i> info@zuahomes.com
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <!-- Updated Agent Information Section -->
+<div class="agent-card p-4 rounded-lg">
+    <h3 class="text-xl font-semibold mb-4">Agent Information</h3>
+    <div class="flex flex-col md:flex-row items-start gap-6">
+        <div class="flex-shrink-0">
+            <img src="https://iili.io/FS2LFWP.jpg" alt="ZAIN UL ABDEEN" class="agent-photo w-24 h-24 rounded-full object-cover">
+        </div>
+        <div class="flex-1">
+            <div class="font-bold text-lg">ZAIN UL ABDEEN</div>
+            <div class="text-gold-400 text-sm mb-3">Founder & CEO, ZUA HOMES REAL ESTATE LLC</div>
+            <div class="flex flex-wrap gap-4">
+                <a href="tel:+971528284315" class="text-blue-400 hover:text-blue-300 flex items-center">
+                    <i class="fas fa-phone-alt mr-2"></i> +971 52 828 4315
+                </a>
+                <a href="mailto:info@zuahomes.com" class="text-blue-400 hover:text-blue-300 flex items-center">
+                    <i class="fas fa-envelope mr-2"></i> info@zuahomes.com
+                </a>
+                <a href="https://wa.me/971528284315" target="_blank" class="text-green-400 hover:text-green-300 flex items-center">
+                    <i class="fab fa-whatsapp mr-2"></i> WhatsApp
+                </a>
             </div>
         </div>
     </div>
+</div>
+
 
     <!-- Contact Form Section -->
     <section id="contact" class="py-20 bg-white text-black">
@@ -697,7 +763,7 @@
         <div class="container mx-auto px-6">
             <div class="flex flex-col md:flex-row items-center justify-between fade-in">
                 <div class="logo-container mb-8 md:mb-0">
-                    <img src="https://iili.io/Fk8MqJ4.md.jpg" alt="ZUA HOMES" class="h-16 w-auto">
+                    <img src="https://iili.io/Fk8MqJ4.md.jpg" alt="ZUA HOMES" class="h-16 w-auto" loading="lazy">
                     <span class="logo-text">ZUA HOMES</span>
                 </div>
                 
@@ -948,9 +1014,8 @@
                         image: "https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
                         amenities: ["18-Hole Golf Course", "Community Centre", "Linear Park", "Swimming Pools", "Fully Equipped Gym"]
                     },
-                    
                     {
-                        id: 11,
+                        id: 10,
                         title: "Royal Atlantis Residences",
                         developer: "Kerzner International",
                         location: "Palm Jumeirah, Dubai",
@@ -963,7 +1028,7 @@
                         amenities: ["Private pools", "Landscaped gardens", "Ocean views", "Access to Atlantis resort amenities"]
                     },
                     {
-                        id: 12,
+                        id: 11,
                         title: "Sobha Hartland II",
                         developer: "Sobha Realty",
                         location: "Bukadra, Dubai",
@@ -976,7 +1041,7 @@
                         amenities: ["Crystal lagoon", "Clubhouse", "Religious facilities", "School", "Beach Access"]
                     },
                     {
-                        id: 13,
+                        id: 12,
                         title: "The Cove II",
                         developer: "Emaar Properties",
                         location: "Dubai Creek Harbour, Dubai",
@@ -988,9 +1053,8 @@
                         image: "https://images.unsplash.com/photo-1560448204-603b3fc33ddc?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
                         amenities: ["Waterfront living", "Dining Outlets", "Gymnasium", "Health Care Centre", "Swimming Pool"]
                     },
-                    
                     {
-                        id: 15,
+                        id: 13,
                         title: "Violet 4 Phase 2",
                         developer: "DAMAC Properties",
                         location: "DAMAC Hills 2, Dubai",
@@ -1003,7 +1067,7 @@
                         amenities: ["Community park", "Swimming pools", "Kids play area", "Jogging tracks", "Retail outlets"]
                     },
                     {
-                        id: 16,
+                        id: 14,
                         title: "Selvara Villas",
                         developer: "Grand Polo Club",
                         location: "Grand Polo Club, Dubai",
@@ -1016,7 +1080,7 @@
                         amenities: ["Polo field views", "Private gardens", "Community clubhouse", "Swimming pools", "Equestrian facilities"]
                     },
                     {
-                        id: 17,
+                        id: 15,
                         title: "Hayat Community",
                         developer: "Hayat Properties",
                         location: "Dubai South, Dubai",
@@ -1025,11 +1089,11 @@
                         bathrooms: "3",
                         type: "Villa",
                         status: "Off-plan",
-                        image: "https://images.unsplash.com/photo-1600585152915-d208bec867a1?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                        image: "https://images.unsplash.com/photo-1600585152915-d208bec867a1?ixlib=rb-4.0.3&auto:format&fit=crop&w=800&q=80",
                         amenities: ["Wellness centers", "Yoga studios", "Organic gardens", "Meditation zones", "Walking trails"]
                     },
                     {
-                        id: 18,
+                        id: 16,
                         title: "R. Hills",
                         developer: "Dubailand Properties",
                         location: "Dubailand, Dubai",
@@ -1038,11 +1102,11 @@
                         bathrooms: "3",
                         type: "Townhouse",
                         status: "Off-plan",
-                        image: "https://images.unsplash.com/photo-1605146769289-440113cc3d00?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                        image: "https://images.unsplash.com/photo-1605146769289-440113cc3d00?ixlib=rb-4.0.3&auto:format&fit=crop&w=800&q=80",
                         amenities: ["Community parks", "Swimming pools", "Fitness centers", "Kids play areas", "Retail outlets"]
                     },
                     {
-                        id: 19,
+                        id: 17,
                         title: "Bo Monde",
                         developer: "Tilal Al Ghaf",
                         location: "Tilal Al Ghaf, Dubai",
@@ -1051,11 +1115,11 @@
                         bathrooms: "7",
                         type: "Villa",
                         status: "Off-plan",
-                        image: "https://images.unsplash.com/photo-1613977257592-4871e5fcd7c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                        image: "https://images.unsplash.com/photo-1613977257592-4871e5fcd7c4?ixlib=rb-4.0.3&auto:format&fit=crop&w=800&q=80",
                         amenities: ["Private beach access", "Home automation", "Private cinemas", "Infinity pools", "Landscaped gardens"]
                     },
                     {
-                        id: 20,
+                        id: 18,
                         title: "Ciel Marina",
                         developer: "Ciel Properties",
                         location: "Dubai Marina, Dubai",
@@ -1064,11 +1128,11 @@
                         bathrooms: "2",
                         type: "Apartment",
                         status: "Ready",
-                        image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                        image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&auto:format&fit=crop&w=800&q=80",
                         amenities: ["Marina views", "Infinity pool", "State-of-the-art gym", "24/7 Concierge", "Private balconies"]
                     },
                     {
-                        id: 21,
+                        id: 19,
                         title: "Burj Azizi",
                         developer: "Azizi Developments",
                         location: "Sheikh Zayed Road, Dubai",
@@ -1077,125 +1141,9 @@
                         bathrooms: "N/A",
                         type: "Commercial",
                         status: "Underway",
-                        image: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                        image: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?ixlib=rb-4.0.3&auto:format&fit=crop&w=800&q=80",
                         amenities: ["Premium retail spaces", "Office spaces", "Luxury residences", "Fine dining", "Observation deck"]
-                    },
-                    [
-  {
-    "id": 1,
-    "title": "Cresswell Residences at Dubai South",
-    "developer": "ESNAD Management",
-    "type": "Apartments",
-    "bedrooms": "1-3 BR",
-    "startingPrice": "AED 718,000",
-    "handover": "Q4 2025",
-    "image": "https://dxboffplan.com/wp-content/uploads/2025/02/maak-residence-dubai-south.jpg",  // Placeholder image (actual project image not found in search)
-    "amenities": [
-      "Rooftop pool",
-      "Gym",
-      "Kids' play area",
-      "Steam room"
-    ],
-    "links": [
-      {
-        "source": "DxbOffplan",
-        "url": "https://dxboffplan.com/properties/cresswell-residences-dubai-south/"  // Working link:cite[2]
-      },
-      {
-        "source": "Inside Realty",
-        "url": "https://insiderealty.ae/en/projects/cresswell-residences-dubai-south-apartments-for-sale"  // Working link:cite[4]
-      }
-    ]
-  },
-  {
-    "id": 2,
-    "title": "MAAK Residence",
-    "developer": "MaakDream",
-    "type": "Apartments",
-    "bedrooms": "1-3 BR",
-    "startingPrice": "AED 521,250",
-    "handover": "Q2 2027",
-    "image": "https://dxboffplan.com/wp-content/uploads/2025/02/maak-residence-dubai-south.jpg",  // Placeholder image
-    "amenities": [
-      "Swimming pool",
-      "Retail outlets"
-    ],
-    "links": [
-      {
-        "source": "DxbOffplan",
-        "url": "https://dxboffplan.com/property-status/2027/"  // Working link:cite[2]
-      }
-    ]
-  },
-  {
-    "id": 3,
-    "title": "Aizel Tower",
-    "developer": "MaakDream",
-    "type": "Apartments",
-    "bedrooms": "Studio-2 BR",
-    "startingPrice": "AED 497,705",
-    "handover": "Q1 2027",
-    "image": "https://dubai.dubizzle.com/uploads/projects/aizel-tower-international-city.jpg",  // Placeholder image
-    "amenities": [
-      "Smart layouts",
-      "Near Dragon Mart"
-    ],
-    "links": [
-      {
-        "source": "Dubizzle",
-        "url": "https://dubai.dubizzle.com/new-projects/maak-dream-one-properties-llc/aizel-tower/"  // Working link (assumed, not in search)
-      }
-    ]
-  },
-  {
-    "id": 4,
-    "title": "Baystar by VIDA",
-    "developer": "Emaar Properties",
-    "type": "Apartments",
-    "bedrooms": "1-4 BR",
-    "startingPrice": "AED 2,100,000",
-    "handover": "Q4 2029",
-    "image": "https://opr.ae/media/projects/baystar-vida-rashid-yachts-marina.jpg",  // Working image link:cite[4]
-    "links": [
-      {
-        "source": "OPR",
-        "url": "https://opr.ae/projects/baystar-by-vida-emaar-rashid-yachts-marina"  // Working link:cite[4]
-      }
-    ]
-  },
-  {
-    "id": 5,
-    "title": "California Village Villas",
-    "developer": "GFH Real Estate",
-    "type": "Villas/Townhouses",
-    "bedrooms": "3-5 BR",
-    "startingPrice": "Ask Price",
-    "handover": "Q3 2025",
-    "image": "https://famproperties.com/images/california-village-dubailand.jpg",  // Placeholder image
-    "links": [
-      {
-        "source": "FamProperties",
-        "url": "https://famproperties.com/wadi-al-safa-4/california-village/3-bedroom-Townhouse-for-Sale-103636"  // Working link:cite[5]
-      }
-    ]
-  },
-  {
-    "id": 6,
-    "title": "Binghatti Flare",
-    "developer": "Binghatti Developers",
-    "type": "Apartments",
-    "bedrooms": "Studio-1 BR",
-    "startingPrice": "AED 800,000",
-    "handover": "Coming Soon",
-    "image": "https://silverstonelr.com/uploads/projects/binghatti-flare-jvt.jpg",  // Placeholder image
-    "links": [
-      {
-        "source": "Silverstone",
-        "url": "https://silverstonelr.com/project-detail/2377/"  // Working link (assumed, not in search)
-      }
-    ]
-  }
-]
+                    }
                 ],
                 
                 // Computed properties
@@ -1291,6 +1239,7 @@
                 openDetails(property) {
                     this.selectedProperty = property;
                     this.showDetails = true;
+                    document.body.style.overflow = 'hidden';
                 },
                 
                 handleScroll() {
@@ -1312,11 +1261,16 @@
                     this.$watch('darkMode', value => {
                         localStorage.setItem('darkMode', value);
                     });
+                    
+                    // Watch modal visibility
+                    this.$watch('showDetails', value => {
+                        document.body.style.overflow = value ? 'hidden' : '';
+                    });
                 }
             }
         }
 
-        // Existing JavaScript from index7.html
+        // Enhanced JavaScript
         document.addEventListener('DOMContentLoaded', function() {
             setupScrollAnimations();
             
@@ -1325,7 +1279,45 @@
             const mobileMenu = document.getElementById('mobile-menu');
             mobileMenuBtn.addEventListener('click', () => {
                 mobileMenu.classList.toggle('hidden');
+                document.body.style.overflow = mobileMenu.classList.contains('hidden') ? '' : 'hidden';
             });
+            
+            // Close mobile menu when clicking links
+            document.querySelectorAll('#mobile-menu a').forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileMenu.classList.add('hidden');
+                    document.body.style.overflow = '';
+                });
+            });
+            
+            // Theme toggle initialization
+            function initTheme() {
+                const savedTheme = localStorage.getItem('darkMode');
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                const isDark = savedTheme ? JSON.parse(savedTheme) : prefersDark;
+                
+                document.documentElement.classList.toggle('dark', isDark);
+                
+                // Set correct icon
+                const icon = document.querySelector('#theme-toggle i');
+                icon.classList.toggle('fa-moon', isDark);
+                icon.classList.toggle('fa-sun', !isDark);
+            }
+            
+            // Theme toggle button
+            document.getElementById('theme-toggle').addEventListener('click', function() {
+                const isDark = document.documentElement.classList.contains('dark');
+                document.documentElement.classList.toggle('dark', !isDark);
+                localStorage.setItem('darkMode', !isDark);
+                
+                // Update icon
+                const icon = this.querySelector('i');
+                icon.classList.toggle('fa-moon', !isDark);
+                icon.classList.toggle('fa-sun', isDark);
+            });
+            
+            // Initialize theme
+            initTheme();
             
             // Contact form submission
             const contactForm = document.getElementById('contact-form');
@@ -1377,67 +1369,6 @@
                 appearOnScroll.observe(fader);
             });
         }
-        // ... existing Alpine.js and JavaScript ...
-
-        // Enhanced mobile menu toggle
-        document.getElementById('mobile-menu-btn').addEventListener('click', function() {
-            const menu = document.getElementById('mobile-menu');
-            menu.classList.toggle('hidden');
-            document.body.style.overflow = menu.classList.contains('hidden') ? '' : 'hidden';
-        });
-
-        // Close mobile menu when clicking links
-        document.querySelectorAll('#mobile-menu a').forEach(link => {
-            link.addEventListener('click', () => {
-                document.getElementById('mobile-menu').classList.add('hidden');
-                document.body.style.overflow = '';
-            });
-        });
-
-        // Improved theme toggle
-        document.getElementById('theme-toggle').addEventListener('click', function() {
-            const isDark = document.documentElement.classList.contains('dark');
-            document.documentElement.classList.toggle('dark', !isDark);
-            localStorage.setItem('darkMode', !isDark);
-            
-            // Update icon
-            const icon = this.querySelector('i');
-            icon.classList.toggle('fa-moon', isDark);
-            icon.classList.toggle('fa-sun', !isDark);
-        });
-
-        // Initialize theme
-        function initTheme() {
-            const savedTheme = localStorage.getItem('darkMode');
-            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            const isDark = savedTheme ? JSON.parse(savedTheme) : prefersDark;
-            
-            document.documentElement.classList.toggle('dark', isDark);
-            
-            // Set correct icon
-            const icon = document.querySelector('#theme-toggle i');
-            icon.classList.toggle('fa-moon', isDark);
-            icon.classList.toggle('fa-sun', !isDark);
-        }
-
-        // Initialize on load
-        document.addEventListener('DOMContentLoaded', function() {
-            initTheme();
-            // ... other initialization ...
-        });
-
-        // Handle foldable devices
-        function handleFoldableResize() {
-            const foldable = window.matchMedia('(spanning: single-fold-vertical)').matches;
-            if (foldable) {
-                document.body.classList.add('foldable');
-            } else {
-                document.body.classList.remove('foldable');
-            }
-        }
-
-        window.addEventListener('resize', handleFoldableResize);
-        handleFoldableResize();
     </script>
 </body>
 </html>
